@@ -1,7 +1,7 @@
-
 import { NewsItem } from '../model/NewsItem';
 import { NewsData } from '../model/NewsData';
 import { NewsImages } from '../model/NewsImages';
+import router from '@ohos.router';
 
 
 @Entry
@@ -95,45 +95,117 @@ struct Index {
 
   build() {
     Column() {
-      // 顶部搜索区域
-      Row() {
-        TextInput({
-          placeholder: '搜索新闻资讯...',
-          controller: new TextInputController()
-        })
-          .width('100%')
-          .height(40)
-          .backgroundColor('#f5f5f5')
-          .borderRadius(20)
-          .padding({ left: 16, right: 16 })
-          .fontSize(14)
-          .fontColor('#333333')
-          .onChange((value: string) => {
-            this.onSearchInputChange(value);
+      // 主内容区域
+      Column() {
+        // 顶部搜索区域
+        Row() {
+          TextInput({
+            placeholder: '搜索新闻资讯...',
+            controller: new TextInputController()
           })
-      }
-      .width('90%')
-      .height(60)
-      .padding({ top: 10, bottom: 10 })
-      .justifyContent(FlexAlign.Center)
+            .width('100%')
+            .height(40)
+            .backgroundColor('#f5f5f5')
+            .borderRadius(20)
+            .padding({ left: 16, right: 16 })
+            .fontSize(14)
+            .fontColor('#333333')
+            .onChange((value: string) => {
+              this.onSearchInputChange(value);
+            })
+        }
+        .width('90%')
+        .height(60)
+        .padding({ top: 10, bottom: 10 })
+        .justifyContent(FlexAlign.Center)
 
-      // 新闻列表区域
-      List() {
-        ForEach(this.newsList, (newsItem: NewsItem) => {
-          ListItem() {
-            NewsListItem({ newsItem: newsItem })
-          }
-          .width('100%')
-        }, (newsItem: NewsItem) => newsItem.id)
+        // 新闻列表区域
+        List() {
+          ForEach(this.newsList, (newsItem: NewsItem) => {
+            ListItem() {
+              NewsListItem({ newsItem: newsItem })
+            }
+            .width('100%')
+          }, (newsItem: NewsItem) => newsItem.id)
+        }
+        .width('100%')
+        .layoutWeight(1)
+        .padding({ left: 16, right: 16 })
+        .scrollBar(BarState.Off)
       }
       .width('100%')
       .layoutWeight(1)
-      .padding({ left: 16, right: 16 })
-      .scrollBar(BarState.Off)
+      .backgroundColor('#ffffff')
+
+      // 底部菜单
+      BottomMenuBar()
     }
     .width('100%')
     .height('100%')
-    .backgroundColor('#ffffff')
+  }
+}
+
+@Component
+struct BottomMenuBar {
+  @State currentIndex: number = 0; // 默认选中"文章"页面
+
+  build() {
+    Row() {
+      // 文章菜单
+      Column() {
+        SymbolGlyph($r('sys.symbol.book_pages_fill'))
+          .width(24)
+          .height(24)
+          .fontColor(this.currentIndex === 0 ?
+            [$r('sys.color.ohos_id_color_text_primary_activated')] :
+            [$r('sys.color.ohos_id_color_text_secondary')])
+        Text('文章')
+          .fontSize(12)
+          .fontColor(this.currentIndex === 0 ?
+            $r('sys.color.ohos_id_color_text_primary_activated') :
+            $r('sys.color.ohos_id_color_text_secondary'))
+          .margin({ top: 4 })
+      }
+      .flexGrow(1)
+      .height(60)
+      .justifyContent(FlexAlign.Center)
+      .alignItems(HorizontalAlign.Center)
+      .onClick(() => {
+        // 当前已在文章页面，无需导航
+      })
+
+      // 我的菜单
+      Column() {
+        SymbolGlyph($r('sys.symbol.person_fill'))
+          .width(24)
+          .height(24)
+          .fontColor(this.currentIndex === 1 ?
+            [$r('sys.color.ohos_id_color_text_primary_activated')] :
+            [$r('sys.color.ohos_id_color_text_secondary')])
+        Text('我')
+          .fontSize(12)
+          .fontColor(this.currentIndex === 1 ?
+            $r('sys.color.ohos_id_color_text_primary_activated') :
+            $r('sys.color.ohos_id_color_text_secondary'))
+          .margin({ top: 4 })
+      }
+      .flexGrow(1)
+      .height(60)
+      .justifyContent(FlexAlign.Center)
+      .alignItems(HorizontalAlign.Center)
+      .onClick(() => {
+        if (this.currentIndex !== 1) {
+          router.pushUrl({
+            url: 'pages/Profile'
+          }).catch(() => {
+            console.error('导航到个人资料页面失败');
+          });
+        }
+      })
+    }
+    .width('100%')
+    .backgroundColor($r('sys.color.ohos_id_color_sub_background'))
+    .border({ width: { top: 1 }, color: '#e0e0e0' })
   }
 }
 

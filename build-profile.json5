@@ -73,18 +73,6 @@
           ]
         }
       ]
-    },
-    {
-      "name": "articles",
-      "srcPath": "./features/articles",
-      "targets": [
-        {
-          "name": "default",
-          "applyToProducts": [
-            "default"
-          ]
-        }
-      ]
     }
   ]
 }

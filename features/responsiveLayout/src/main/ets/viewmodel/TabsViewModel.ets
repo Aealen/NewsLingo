@@ -12,8 +12,9 @@ export class TabsViewModel {
    */
   getTabData(): TabBarItem[] {
     const tabItems: TabBarItem[] = [];
-    const tabNames = [$r('app.string.tab_articles'), $r('app.string.tab_profile')];
-    const tabIcons = [$r('sys.symbol.book_pages_fill'), $r('sys.symbol.person_fill')];
+    const tabNames: Resource[] = [$r('app.string.tab_articles'), $r('app.string.tab_profile')];
+    const tabIcons: Resource[] = [$r('sys.symbol.book_pages_fill'), $r('sys.symbol.person_fill')];
+    const tabRoutes: string[] = ['pages/Articles', 'pages/Profile'];
 
     for (let i = 0; i < commonConstants.tabSize; i++) {
       const itemInfo: TabBarItem = new TabBarItem();
@@ -21,6 +22,7 @@ export class TabsViewModel {
       itemInfo.name = tabNames[i];
       itemInfo.icon = tabIcons[i];
       itemInfo.selectIcon = tabIcons[i];
+      itemInfo.route = tabRoutes[i];
       tabItems.push(itemInfo);
     }
     return tabItems;

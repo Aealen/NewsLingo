@@ -49,6 +49,15 @@ export struct TabIndex {
     }
     .width(commonConstants.flexTabBarWidth)
     .height(commonConstants.flexTabBarHeight)
+    .onClick(() => {
+      if (this.currentIndex !== tabBar.id && tabBar.route) {
+        this.getUIContext().getRouter().pushUrl({
+          url: tabBar.route
+        }).catch(() => {
+          console.error('导航失败: ' + tabBar.route);
+        });
+      }
+    })
   }
 
   aboutToAppear() {

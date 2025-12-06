@@ -1,6 +1,8 @@
 {
   "src": [
+    "pages/Articles",
     "pages/Index",
-    "pages/ResponsiveIndex"
+    "pages/ResponsiveIndex",
+    "pages/Profile"
   ]
 }
