@@ -73,6 +73,18 @@
           ]
         }
       ]
+    },
+    {
+      "name": "application",
+      "srcPath": "./products/application",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
     }
   ]
 }
