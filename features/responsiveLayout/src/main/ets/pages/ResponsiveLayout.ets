@@ -31,7 +31,7 @@ export struct TabIndex {
       })
       .getValue(this.currentBreakpoint), justifyContent: FlexAlign.Center, alignItems: ItemAlign.Center
     }) {
-      SymbolGlyph($r('sys.symbol.person_crop_circle_fill_1'))
+      SymbolGlyph(tabBar.icon)
         .fontColor(this.currentIndex === tabBar.id ?
           [$r('sys.color.ohos_id_color_text_primary_activated')] : [$r('sys.color.ohos_id_color_text_secondary')])
         .fontSize($r('app.float.tab_img_width'))

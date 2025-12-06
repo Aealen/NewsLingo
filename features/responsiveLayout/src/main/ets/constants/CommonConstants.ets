@@ -152,7 +152,7 @@ export const commonConstants: CommonConstantsInterface = {
   /**
    * The number of tab component.
    */
-  tabSize: 4,
+  tabSize: 2,
 
   /**
    * The number of grid item.

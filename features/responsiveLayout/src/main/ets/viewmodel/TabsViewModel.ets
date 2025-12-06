@@ -12,12 +12,15 @@ export class TabsViewModel {
    */
   getTabData(): TabBarItem[] {
     const tabItems: TabBarItem[] = [];
+    const tabNames = [$r('app.string.tab_articles'), $r('app.string.tab_profile')];
+    const tabIcons = [$r('sys.symbol.book_pages_fill'), $r('sys.symbol.person_fill')];
+
     for (let i = 0; i < commonConstants.tabSize; i++) {
       const itemInfo: TabBarItem = new TabBarItem();
       itemInfo.id = i;
-      itemInfo.name = $r('app.string.tab_name');
-      itemInfo.icon = $r('app.media.ic_tabs_icon');
-      itemInfo.selectIcon = $r('app.media.ic_tabs_icon_selected');
+      itemInfo.name = tabNames[i];
+      itemInfo.icon = tabIcons[i];
+      itemInfo.selectIcon = tabIcons[i];
       tabItems.push(itemInfo);
     }
     return tabItems;

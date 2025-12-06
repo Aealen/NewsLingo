@@ -27,8 +27,8 @@
   },
   "modules": [
     {
-      "name": "default",
-      "srcPath": "./products/default",
+      "name": "app",
+      "srcPath": "./products/app",
       "targets": [
         {
           "name": "default",
@@ -75,8 +75,8 @@
       ]
     },
     {
-      "name": "application",
-      "srcPath": "./products/application",
+      "name": "articles",
+      "srcPath": "./features/articles",
       "targets": [
         {
           "name": "default",

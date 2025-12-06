@@ -19,6 +19,14 @@
     {
       "name": "tab_name",
       "value": "tab"
+    },
+    {
+      "name": "tab_articles",
+      "value": "文章"
+    },
+    {
+      "name": "tab_profile",
+      "value": "我"
     }
   ]
 }

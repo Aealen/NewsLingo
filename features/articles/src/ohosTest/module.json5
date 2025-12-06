@@ -1,6 +1,6 @@
 {
   "module": {
-    "name": "application_test",
+    "name": "articles_test",
     "type": "feature",
     "deviceTypes": [
       "phone"
