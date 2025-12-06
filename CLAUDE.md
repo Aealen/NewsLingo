@@ -142,3 +142,4 @@ The project uses a feature-based modular architecture with four main modules:
 - **Build System**: Hvigor (TypeScript-based)
 - **Package Name**: tech.aowu.newslingo
 - **Testing Framework**: @ohos/hypium with @ohos/hamock for mocks
+- ArkTS语言规范要求静态方法中不能使用this关键字来访问静态属性。this只能在实例方法中引用当前对象实例，而静态方法属于类本身，需要通过类名直接访问静态属性。
