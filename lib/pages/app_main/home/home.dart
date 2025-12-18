@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../components/update_app/check_app_version.dart';
 import '../../../components/article_item/article_item.dart';
+import '../../../components/filter_chips/filter_chips.dart';
 import '../../../routes/route_name.dart';
 import '../../../config/app_env.dart' show appEnv;
 import '../../../models/article.m.dart';
@@ -24,6 +25,8 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
   List<ArticleModel> articles = []; // 文章列表
   List<ArticleModel> filteredArticles = []; // 筛选后的文章列表
   TextEditingController _searchController = TextEditingController(); // 搜索控制器
+  String? selectedCategory; // 选中的领域/类别
+  String? selectedSource; // 选中的来源
 
   @override
   void initState() {
@@ -40,19 +43,38 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
   }
 
   // 搜索筛选文章
-  void _filterArticles(String query) {
+  void _filterArticles() {
     setState(() {
-      if (query.isEmpty) {
-        filteredArticles = articles;
-      } else {
-        filteredArticles = articles.where((article) {
-          // 搜索标题、摘要和来源
-          return article.title.toLowerCase().contains(query.toLowerCase()) ||
-              article.summary.toLowerCase().contains(query.toLowerCase()) ||
-              article.source.toLowerCase().contains(query.toLowerCase());
-        }).toList();
-      }
+      filteredArticles = articles.where((article) {
+        // 搜索条件
+        bool matchesSearch = _searchController.text.isEmpty ||
+            article.title.toLowerCase().contains(_searchController.text.toLowerCase()) ||
+            article.summary.toLowerCase().contains(_searchController.text.toLowerCase()) ||
+            article.source.toLowerCase().contains(_searchController.text.toLowerCase());
+
+        // 领域筛选
+        bool matchesCategory = selectedCategory == null || article.category == selectedCategory;
+
+        // 来源筛选
+        bool matchesSource = selectedSource == null || article.source == selectedSource;
+
+        return matchesSearch && matchesCategory && matchesSource;
+      }).toList();
     });
+  }
+
+  // 获取所有可用的领域列表
+  List<String> getAvailableCategories() {
+    final categories = articles.map((article) => article.category).toSet().toList();
+    categories.sort();
+    return categories;
+  }
+
+  // 获取所有可用的来源列表
+  List<String> getAvailableSources() {
+    final sources = articles.map((article) => article.source).toSet().toList();
+    sources.sort();
+    return sources;
   }
 
   @override
@@ -84,7 +106,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
           children: [
             // 搜索框区域
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 boxShadow: [
@@ -97,61 +119,110 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
               ),
               child: StatefulBuilder(
                 builder: (context, setInnerState) {
-                  return TextField(
-                    controller: _searchController,
-                    onChanged: (value) {
-                      _filterArticles(value);
-                      setInnerState(() {});
-                    },
-                    decoration: InputDecoration(
-                      hintText: '搜索文章标题、摘要或来源...',
-                      hintStyle: TextStyle(
-                        color: const Color(0xFF999999),
-                        fontSize: 14.sp,
+                  return SizedBox(
+                    height: 48.h, // 增加搜索框实际高度
+                    child: TextField(
+                      controller: _searchController,
+                      onChanged: (value) {
+                        _filterArticles();
+                        setInnerState(() {});
+                      },
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        height: 1.2, // 控制光标高度
                       ),
-                      prefixIcon: Icon(
-                        Icons.search,
-                        color: const Color(0xFF999999),
-                        size: 22.w,
-                      ),
-                      suffixIcon: _searchController.text.isNotEmpty
-                          ? IconButton(
-                              icon: Icon(
-                                Icons.clear,
-                                color: const Color(0xFF999999),
-                                size: 20.w,
-                              ),
-                              onPressed: () {
-                                _searchController.clear();
-                                _filterArticles('');
-                                setInnerState(() {});
-                              },
-                            )
-                          : null,
-                      filled: true,
-                      fillColor: const Color(0xFFF8F9FA),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 14.h,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25.r),
-                        borderSide: BorderSide.none,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25.r),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25.r),
-                        borderSide: BorderSide(
-                          color: const Color(0xFF2196F3),
-                          width: 2,
+                      cursorHeight: 22.h, // 增加光标高度
+                      decoration: InputDecoration(
+                        hintText: '搜索文章标题、摘要或来源...',
+                        hintStyle: TextStyle(
+                          color: const Color(0xFF999999),
+                          fontSize: 15.sp,
+                          height: 1.2, // 控制提示文字高度
                         ),
+                        prefixIcon: Icon(
+                          Icons.search,
+                          color: const Color(0xFF999999),
+                          size: 22.w,
+                        ),
+                        prefixIconConstraints: BoxConstraints(
+                          minWidth: 44.w,
+                          minHeight: 22.h,
+                        ),
+                        suffixIcon: _searchController.text.isNotEmpty
+                            ? IconButton(
+                                icon: Icon(
+                                  Icons.clear,
+                                  color: const Color(0xFF999999),
+                                  size: 20.w,
+                                ),
+                                onPressed: () {
+                                  _searchController.clear();
+                                  _filterArticles();
+                                  setInnerState(() {});
+                                },
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                              )
+                            : null,
+                        filled: true,
+                        fillColor: const Color(0xFFF8F9FA),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 8.h, // 增加垂直padding
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24.r),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24.r),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24.r),
+                          borderSide: BorderSide(
+                            color: const Color(0xFF2196F3),
+                            width: 2,
+                          ),
+                        ),
+                        isDense: false, // 允许正常的内边距
                       ),
                     ),
                   );
                 },
+              ),
+            ),
+            // 筛选条件区域
+            Container(
+              color: Colors.white,
+              padding: EdgeInsets.only(top: 8.h),
+              child: Column(
+                children: [
+                  // 领域筛选
+                  FilterSection(
+                    title: '领域',
+                    options: getAvailableCategories(),
+                    selectedOption: selectedCategory,
+                    onSelected: (category) {
+                      setState(() {
+                        selectedCategory = category;
+                        _filterArticles();
+                      });
+                    },
+                  ),
+                  // 来源筛选
+                  FilterSection(
+                    title: '来源',
+                    options: getAvailableSources(),
+                    selectedOption: selectedSource,
+                    onSelected: (source) {
+                      setState(() {
+                        selectedSource = source;
+                        _filterArticles();
+                      });
+                    },
+                  ),
+                ],
               ),
             ),
             // 文章列表区域

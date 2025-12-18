@@ -5,6 +5,7 @@ import '../../models/article.m.dart';
 
 class ArticleDetail extends StatefulWidget {
   const ArticleDetail({super.key, this.params});
+
   final dynamic params;
 
   @override
@@ -26,8 +27,10 @@ class _ArticleDetailState extends State<ArticleDetail> {
         id: 'default',
         title: '文章加载中...',
         summary: '正在加载文章内容...',
-        coverImage: 'https://pic4.zhimg.com/v2-dde84723b58e2d208690c490dc060735_720w.jpg?source=172ae18b',
+        coverImage:
+            'https://pic4.zhimg.com/v2-dde84723b58e2d208690c490dc060735_720w.jpg?source=172ae18b',
         source: '未知来源',
+        category: '默认类别',
         date: DateTime.now().toString().substring(0, 10),
       );
     }
