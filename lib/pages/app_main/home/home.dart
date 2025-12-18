@@ -64,69 +64,102 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
       appBar: AppBar(
         title: const Text('NewsLingo'),
         automaticallyImplyLeading: false,
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(60.h),
-          child: StatefulBuilder(
-            builder: (context, setState) {
-              return Padding(
-                padding: EdgeInsets.all(16.w),
-                child: TextField(
-                  controller: _searchController,
-                  onChanged: _filterArticles,
-                  decoration: InputDecoration(
-                    hintText: '搜索文章标题、摘要或来源...',
-                    hintStyle: TextStyle(
-                      color: Colors.grey[500],
-                      fontSize: 14.sp,
-                    ),
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: Colors.grey[500],
-                    ),
-                    suffixIcon: _searchController.text.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(Icons.clear),
-                            onPressed: () {
-                              _searchController.clear();
-                              _filterArticles('');
-                              setState(() {}); // 更新UI
-                            },
-                          )
-                        : null,
-                    filled: true,
-                    fillColor: Colors.grey[100],
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 12.h,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.r),
-                      borderSide: BorderSide.none,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.r),
-                      borderSide: BorderSide.none,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.r),
-                      borderSide: BorderSide(
-                        color: Colors.blue,
-                        width: 1.5,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        titleTextStyle: TextStyle(
+          fontSize: 20.sp,
+          fontWeight: FontWeight.w600,
+          color: Colors.black,
         ),
+        toolbarHeight: 44.h, // 自定义AppBar高度
       ),
+      backgroundColor: const Color(0xFFF5F6FA),
       body: GestureDetector(
         onTap: () {
           // 点击空白页面关闭键盘
           FocusScope.of(context).requestFocus(blankNode);
         },
-        child: contextWidget(),
+        child: Column(
+          children: [
+            // 搜索框区域
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(0x0A000000),
+                    blurRadius: 10,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: StatefulBuilder(
+                builder: (context, setInnerState) {
+                  return TextField(
+                    controller: _searchController,
+                    onChanged: (value) {
+                      _filterArticles(value);
+                      setInnerState(() {});
+                    },
+                    decoration: InputDecoration(
+                      hintText: '搜索文章标题、摘要或来源...',
+                      hintStyle: TextStyle(
+                        color: const Color(0xFF999999),
+                        fontSize: 14.sp,
+                      ),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: const Color(0xFF999999),
+                        size: 22.w,
+                      ),
+                      suffixIcon: _searchController.text.isNotEmpty
+                          ? IconButton(
+                              icon: Icon(
+                                Icons.clear,
+                                color: const Color(0xFF999999),
+                                size: 20.w,
+                              ),
+                              onPressed: () {
+                                _searchController.clear();
+                                _filterArticles('');
+                                setInnerState(() {});
+                              },
+                            )
+                          : null,
+                      filled: true,
+                      fillColor: const Color(0xFFF8F9FA),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 14.h,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25.r),
+                        borderSide: BorderSide.none,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25.r),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25.r),
+                        borderSide: BorderSide(
+                          color: const Color(0xFF2196F3),
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            // 文章列表区域
+            Expanded(
+              child: contextWidget(),
+            ),
+          ],
+        ),
       ),
     );
   }
