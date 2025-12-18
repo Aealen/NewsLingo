@@ -12,8 +12,6 @@ import '../../config/app_config.dart';
 import '../../components/exit_app_interceptor/exit_app_interceptor.dart';
 import '../../provider/global.p.dart';
 import 'my_personal/my_personal.dart';
-import 'search/search.dart';
-import 'hot/hot.dart';
 import 'home/home.dart';
 
 /// [params] 别名路由传递的参数
@@ -65,16 +63,6 @@ class _AppMainState extends State<AppMain>
       'title': '首页',
       'icon': Icons.home,
       'body': const Home(),
-    },
-    {
-      'title': '热门',
-      'icon': Icons.whatshot,
-      'body': const Hot(),
-    },
-    {
-      'title': '搜索',
-      'icon': Icons.search,
-      'body': Search(),
     },
     {
       'title': '我的',
