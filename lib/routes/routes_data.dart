@@ -6,6 +6,7 @@ import '../pages/splash/splash.dart';
 import '../pages/test_demo/test_demo.dart';
 import '../pages/login/login.dart';
 import '../pages/article_detail/article_detail.dart';
+import '../pages/app_main/theme_settings/theme_settings.dart';
 
 final String initialRoute = RouteName.splashPage; // 初始默认显示的路由
 
@@ -19,4 +20,5 @@ final Map<String,
   RouteName.testDemo: (context, {params}) => TestDemo(params: params),
   RouteName.login: (context, {params}) => Login(params: params),
   RouteName.articleDetail: (context, {params}) => ArticleDetail(params: params),
+  RouteName.themeSettings: (context, {params}) => ThemeSettings(),
 };

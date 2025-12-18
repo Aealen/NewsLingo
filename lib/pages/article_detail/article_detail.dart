@@ -38,24 +38,27 @@ class _ArticleDetailState extends State<ArticleDetail> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('文章详情'),
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        iconTheme: const IconThemeData(color: Colors.black),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        foregroundColor: Theme.of(context).textTheme.titleLarge?.color,
+        iconTheme: IconThemeData(color: Theme.of(context).textTheme.titleLarge?.color),
         actions: [
           IconButton(
-            icon: const Icon(Icons.share),
+            icon: Icon(Icons.share, color: Theme.of(context).textTheme.titleLarge?.color),
             onPressed: _shareArticle,
           ),
           IconButton(
-            icon: const Icon(Icons.favorite_border),
+            icon: Icon(Icons.favorite_border, color: Theme.of(context).textTheme.titleLarge?.color),
             onPressed: _favoriteArticle,
           ),
         ],
       ),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,20 +75,20 @@ class _ArticleDetailState extends State<ArticleDetail> {
                     return Container(
                       width: double.infinity,
                       height: 250.h,
-                      color: Colors.grey[300],
+                      color: isDarkMode ? Colors.grey[800] : Colors.grey[300],
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
                             Icons.image_not_supported,
                             size: 50.w,
-                            color: Colors.grey[600],
+                            color: isDarkMode ? Colors.grey[500] : Colors.grey[600],
                           ),
                           SizedBox(height: 8.h),
                           Text(
                             '图片加载失败',
                             style: TextStyle(
-                              color: Colors.grey[600],
+                              color: isDarkMode ? Colors.grey[500] : Colors.grey[600],
                               fontSize: 14.sp,
                             ),
                           ),
@@ -107,7 +110,7 @@ class _ArticleDetailState extends State<ArticleDetail> {
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
-                          Colors.black.withOpacity(0.7),
+                          Colors.black.withOpacity(isDarkMode ? 0.5 : 0.7),
                         ],
                       ),
                     ),
@@ -117,8 +120,15 @@ class _ArticleDetailState extends State<ArticleDetail> {
             ),
 
             // 文章内容
-            Padding(
+            Container(
               padding: EdgeInsets.all(20.w),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20.r),
+                  topRight: Radius.circular(20.r),
+                ),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -128,7 +138,7 @@ class _ArticleDetailState extends State<ArticleDetail> {
                     style: TextStyle(
                       fontSize: 24.sp,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: Theme.of(context).textTheme.titleLarge?.color,
                       height: 1.4,
                     ),
                   ),
@@ -144,14 +154,22 @@ class _ArticleDetailState extends State<ArticleDetail> {
                           vertical: 6.h,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.blue.withOpacity(0.1),
+                          color: isDarkMode
+                              ? Theme.of(context).primaryColor.withOpacity(0.2)
+                              : Colors.blue.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(15.r),
+                          border: isDarkMode ? Border.all(
+                            color: Theme.of(context).primaryColor.withOpacity(0.3),
+                            width: 1,
+                          ) : null,
                         ),
                         child: Text(
                           article.source,
                           style: TextStyle(
                             fontSize: 13.sp,
-                            color: Colors.blue[600],
+                            color: isDarkMode
+                                ? Theme.of(context).primaryColor.withOpacity(0.8)
+                                : Colors.blue[600],
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -162,7 +180,7 @@ class _ArticleDetailState extends State<ArticleDetail> {
                         article.date,
                         style: TextStyle(
                           fontSize: 13.sp,
-                          color: Colors.grey[600],
+                          color: Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey[600],
                         ),
                       ),
                     ],
@@ -175,7 +193,7 @@ class _ArticleDetailState extends State<ArticleDetail> {
                     style: TextStyle(
                       fontSize: 18.sp,
                       fontWeight: FontWeight.w600,
-                      color: Colors.black87,
+                      color: Theme.of(context).textTheme.titleMedium?.color ?? Colors.black87,
                     ),
                   ),
                   SizedBox(height: 12.h),
@@ -185,7 +203,7 @@ class _ArticleDetailState extends State<ArticleDetail> {
                     article.summary,
                     style: TextStyle(
                       fontSize: 16.sp,
-                      color: Colors.grey[700],
+                      color: Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey[700],
                       height: 1.8,
                     ),
                   ),
@@ -201,12 +219,12 @@ class _ArticleDetailState extends State<ArticleDetail> {
                       Expanded(
                         child: OutlinedButton.icon(
                           onPressed: _shareArticle,
-                          icon: const Icon(Icons.share),
-                          label: const Text('分享文章'),
+                          icon: Icon(Icons.share, color: Theme.of(context).primaryColor),
+                          label: Text('分享文章'),
                           style: OutlinedButton.styleFrom(
                             padding: EdgeInsets.symmetric(vertical: 12.h),
-                            side: BorderSide(color: Colors.blue[300]!),
-                            foregroundColor: Colors.blue[700],
+                            side: BorderSide(color: Theme.of(context).primaryColor),
+                            foregroundColor: Theme.of(context).primaryColor,
                           ),
                         ),
                       ),
@@ -217,8 +235,8 @@ class _ArticleDetailState extends State<ArticleDetail> {
                           icon: const Icon(Icons.open_in_browser),
                           label: const Text('阅读原文'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue[600],
-                            foregroundColor: Colors.white,
+                            backgroundColor: Theme.of(context).primaryColor,
+                            foregroundColor: Theme.of(context).colorScheme.onPrimary,
                             padding: EdgeInsets.symmetric(vertical: 12.h),
                           ),
                         ),
@@ -237,6 +255,8 @@ class _ArticleDetailState extends State<ArticleDetail> {
 
   // 构建模拟的详细内容
   Widget _buildContent() {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -245,7 +265,7 @@ class _ArticleDetailState extends State<ArticleDetail> {
           style: TextStyle(
             fontSize: 18.sp,
             fontWeight: FontWeight.w600,
-            color: Colors.black87,
+            color: Theme.of(context).textTheme.titleMedium?.color ?? Colors.black87,
           ),
         ),
         SizedBox(height: 12.h),
@@ -259,7 +279,7 @@ class _ArticleDetailState extends State<ArticleDetail> {
 总的来说，这篇文章为读者呈现了一个全面而深入的分析，对于了解该领域的最新动态具有重要意义。''',
           style: TextStyle(
             fontSize: 16.sp,
-            color: Colors.grey[700],
+            color: Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey[700],
             height: 1.8,
           ),
         ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'components/set_theme_demo.dart';
 import 'package:jh_debug/jh_debug.dart';
+import '../../../../routes/route_name.dart';
 
 import 'components/head_userbox.dart';
 
@@ -26,7 +26,6 @@ class _MyPersonalState extends State<MyPersonal>
       body: Column(
         children: [
           HeadUserBox(),
-          SetThemeDemo(),
         ],
       ),
       floatingActionButton: FloatingActionButton(

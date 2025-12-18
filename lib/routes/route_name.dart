@@ -20,4 +20,7 @@ class RouteName {
 
   /// 文章详情页
   static String articleDetail = '/articleDetail';
+
+  /// 主题设置页
+  static String themeSettings = '/themeSettings';
 }

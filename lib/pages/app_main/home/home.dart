@@ -87,16 +87,16 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
         title: const Text('NewsLingo'),
         automaticallyImplyLeading: false,
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        foregroundColor: Theme.of(context).textTheme.titleLarge?.color,
         titleTextStyle: TextStyle(
           fontSize: 20.sp,
           fontWeight: FontWeight.w600,
-          color: Colors.black,
+          color: Theme.of(context).textTheme.titleLarge?.color ?? Colors.black,
         ),
         toolbarHeight: 44.h, // 自定义AppBar高度
       ),
-      backgroundColor: const Color(0xFFF5F6FA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: GestureDetector(
         onTap: () {
           // 点击空白页面关闭键盘
@@ -107,13 +107,13 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
             // 搜索框区域
             Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
                 boxShadow: [
                   BoxShadow(
-                    color: Color(0x0A000000),
+                    color: Theme.of(context).shadowColor.withOpacity(0.1),
                     blurRadius: 10,
-                    offset: Offset(0, 2),
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
@@ -130,18 +130,19 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                       style: TextStyle(
                         fontSize: 15.sp,
                         height: 1.2, // 控制光标高度
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                       cursorHeight: 22.h, // 增加光标高度
                       decoration: InputDecoration(
                         hintText: '搜索文章标题、摘要或来源...',
                         hintStyle: TextStyle(
-                          color: const Color(0xFF999999),
+                          color: Theme.of(context).hintColor,
                           fontSize: 15.sp,
                           height: 1.2, // 控制提示文字高度
                         ),
                         prefixIcon: Icon(
                           Icons.search,
-                          color: const Color(0xFF999999),
+                          color: Theme.of(context).hintColor,
                           size: 22.w,
                         ),
                         prefixIconConstraints: BoxConstraints(
@@ -152,7 +153,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                             ? IconButton(
                                 icon: Icon(
                                   Icons.clear,
-                                  color: const Color(0xFF999999),
+                                  color: Theme.of(context).hintColor,
                                   size: 20.w,
                                 ),
                                 onPressed: () {
@@ -165,7 +166,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                               )
                             : null,
                         filled: true,
-                        fillColor: const Color(0xFFF8F9FA),
+                        fillColor: Theme.of(context).inputDecorationTheme.fillColor ?? Theme.of(context).cardColor,
                         contentPadding: EdgeInsets.symmetric(
                           horizontal: 16.w,
                           vertical: 8.h, // 增加垂直padding
@@ -181,7 +182,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(24.r),
                           borderSide: BorderSide(
-                            color: const Color(0xFF2196F3),
+                            color: Theme.of(context).primaryColor,
                             width: 2,
                           ),
                         ),
@@ -194,7 +195,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
             ),
             // 筛选条件区域
             Container(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               padding: EdgeInsets.only(top: 8.h),
               child: Column(
                 children: [
