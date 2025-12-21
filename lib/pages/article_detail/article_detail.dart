@@ -25,8 +25,8 @@ class _ArticleDetailState extends State<ArticleDetail> {
       // 如果没有传入文章数据，使用默认文章
       article = ArticleModel(
         id: 'default',
-        title: '文章加载中...',
-        summary: '正在加载文章内容...',
+        title: 'Loading article...',
+        summary: 'Loading article content...',
         coverImage:
             'https://pic4.zhimg.com/v2-dde84723b58e2d208690c490dc060735_720w.jpg?source=172ae18b',
         source: '未知来源',
@@ -42,7 +42,7 @@ class _ArticleDetailState extends State<ArticleDetail> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('文章详情'),
+        title: const Text('Article Detail'),
         elevation: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         foregroundColor: Theme.of(context).textTheme.titleLarge?.color,
@@ -86,7 +86,7 @@ class _ArticleDetailState extends State<ArticleDetail> {
                           ),
                           SizedBox(height: 8.h),
                           Text(
-                            '图片加载失败',
+                            'Image failed to load',
                             style: TextStyle(
                               color: isDarkMode ? Colors.grey[500] : Colors.grey[600],
                               fontSize: 14.sp,
@@ -155,11 +155,11 @@ class _ArticleDetailState extends State<ArticleDetail> {
                         ),
                         decoration: BoxDecoration(
                           color: isDarkMode
-                              ? Theme.of(context).primaryColor.withOpacity(0.2)
-                              : Colors.blue.withOpacity(0.1),
+                              ? const Color(0xFFFF8A65).withOpacity(0.15)
+                              : Theme.of(context).primaryColor.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(15.r),
                           border: isDarkMode ? Border.all(
-                            color: Theme.of(context).primaryColor.withOpacity(0.3),
+                            color: const Color(0xFFFF8A65).withOpacity(0.4),
                             width: 1,
                           ) : null,
                         ),
@@ -168,8 +168,8 @@ class _ArticleDetailState extends State<ArticleDetail> {
                           style: TextStyle(
                             fontSize: 13.sp,
                             color: isDarkMode
-                                ? Theme.of(context).primaryColor.withOpacity(0.8)
-                                : Colors.blue[600],
+                                ? const Color(0xFFFF8A65)
+                                : Theme.of(context).primaryColor,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -189,7 +189,7 @@ class _ArticleDetailState extends State<ArticleDetail> {
 
                   // 摘要标题
                   Text(
-                    '内容摘要',
+                    'Content Summary',
                     style: TextStyle(
                       fontSize: 18.sp,
                       fontWeight: FontWeight.w600,
@@ -220,7 +220,7 @@ class _ArticleDetailState extends State<ArticleDetail> {
                         child: OutlinedButton.icon(
                           onPressed: _shareArticle,
                           icon: Icon(Icons.share, color: Theme.of(context).primaryColor),
-                          label: Text('分享文章'),
+                          label: Text('Share Article'),
                           style: OutlinedButton.styleFrom(
                             padding: EdgeInsets.symmetric(vertical: 12.h),
                             side: BorderSide(color: Theme.of(context).primaryColor),
@@ -233,7 +233,7 @@ class _ArticleDetailState extends State<ArticleDetail> {
                         child: ElevatedButton.icon(
                           onPressed: _openOriginal,
                           icon: const Icon(Icons.open_in_browser),
-                          label: const Text('阅读原文'),
+                          label: const Text('Read Original'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Theme.of(context).primaryColor,
                             foregroundColor: Theme.of(context).colorScheme.onPrimary,
@@ -261,7 +261,7 @@ class _ArticleDetailState extends State<ArticleDetail> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '详细介绍',
+          'Detailed Content',
           style: TextStyle(
             fontSize: 18.sp,
             fontWeight: FontWeight.w600,
@@ -270,13 +270,13 @@ class _ArticleDetailState extends State<ArticleDetail> {
         ),
         SizedBox(height: 12.h),
         Text(
-          '''这是一篇关于 ${article.title} 的详细报道。文章深入探讨了该主题的各个方面，为读者提供了全面的信息和独到的见解。
+          '''This is a detailed report about ${article.title}. The article deeply explores various aspects of this topic, providing readers with comprehensive information and unique insights.
 
-文章首先介绍了背景情况，让读者对整个事件有了基本的了解。随后，文章详细分析了关键因素，并通过多个案例和数据支持，使得论述更加具有说服力。
+The article first introduces the background, giving readers a basic understanding of the entire event. Subsequently, the article analyzes key factors in detail, making the argument more persuasive through multiple cases and data support.
 
-专家表示，这个领域的发展前景广阔，预计在未来几年内将迎来重要突破。同时，文章也提到了当前面临的一些挑战和可能的解决方案。
+Experts believe that this field has broad development prospects and is expected to achieve important breakthroughs in the coming years. At the same time, the article also mentions some current challenges and possible solutions.
 
-总的来说，这篇文章为读者呈现了一个全面而深入的分析，对于了解该领域的最新动态具有重要意义。''',
+Overall, this article presents readers with a comprehensive and in-depth analysis, which is of great significance for understanding the latest developments in this field.''',
           style: TextStyle(
             fontSize: 16.sp,
             color: Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey[700],
@@ -291,7 +291,7 @@ class _ArticleDetailState extends State<ArticleDetail> {
   void _shareArticle() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('分享功能待完善'),
+        content: Text('Share feature coming soon'),
         duration: Duration(seconds: 2),
       ),
     );
@@ -301,7 +301,7 @@ class _ArticleDetailState extends State<ArticleDetail> {
   void _favoriteArticle() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('收藏功能待完善'),
+        content: Text('Favorite feature coming soon'),
         duration: Duration(seconds: 2),
       ),
     );
@@ -318,7 +318,7 @@ class _ArticleDetailState extends State<ArticleDetail> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('无法打开链接'),
+            content: Text('Unable to open link'),
             duration: Duration(seconds: 2),
           ),
         );
@@ -326,7 +326,7 @@ class _ArticleDetailState extends State<ArticleDetail> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('打开链接失败: $e'),
+          content: Text('Failed to open link: $e'),
           duration: const Duration(seconds: 2),
         ),
       );

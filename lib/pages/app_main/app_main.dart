@@ -216,6 +216,8 @@ class _AppMainState extends State<AppMain>
         elevation: 5.0,
         selectedFontSize: 26.sp, // 选中的字体大小
         unselectedFontSize: 26.sp, // 未选中的字体大小
+        selectedItemColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFFFF8A65) : null, // 暗黑模式下选中颜色为橙色
+        unselectedItemColor: Theme.of(context).brightness == Brightness.dark ? Colors.grey[400] : null, // 暗黑模式下未选中颜色为灰色
         onTap: (int idx) async {
           setState(() {
             currentIndex = idx;

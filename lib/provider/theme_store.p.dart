@@ -3,7 +3,7 @@ import '../constants/themes/index_theme.dart';
 
 // Provider状态管理使用
 class ThemeStore with ChangeNotifier {
-  ThemeData _themeData = themeBlueGrey;
+  ThemeData _themeData = themeLightBlue;
 
   // 更新全局主题样式
   void setTheme(ThemeData themeName) {

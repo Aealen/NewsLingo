@@ -106,12 +106,12 @@ class ArticleItem extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: isDarkMode
-                              ? Theme.of(context).primaryColor.withOpacity(0.2)
+                              ? const Color(0xFFFF8A65).withOpacity(0.15)
                               : const Color(0xFFE3F2FD),
                           borderRadius: BorderRadius.circular(16.r),
                           border: isDarkMode
                               ? Border.all(
-                                  color: Theme.of(context).primaryColor.withOpacity(0.3),
+                                  color: const Color(0xFFFF8A65).withOpacity(0.4),
                                   width: 1,
                                 )
                               : null,
@@ -121,7 +121,7 @@ class ArticleItem extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 11.sp,
                             color: isDarkMode
-                                ? Theme.of(context).primaryColor.withOpacity(0.8)
+                                ? const Color(0xFFFF8A65)
                                 : const Color(0xFF1976D2),
                             fontWeight: FontWeight.w500,
                           ),
