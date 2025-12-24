@@ -15,10 +15,10 @@ enum ENV {
 
 // dio请求前缀
 final Map<ENV, String> _baseUrl = {
-  ENV.DEV: 'https://apifoxmock.com',
-  ENV.TEST: 'https://urltest.com',
-  ENV.PRE: 'https://urlpre.com',
-  ENV.PROD: 'https://url.com',
+  ENV.DEV: 'http://127.0.0.1:22838',
+  ENV.TEST: 'http://127.0.0.1:22838',
+  ENV.PRE: 'http://127.0.0.1:22838',
+  ENV.PROD: 'http://127.0.0.1:22838',
 };
 
 class AppEnv {

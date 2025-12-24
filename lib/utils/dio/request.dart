@@ -12,6 +12,10 @@ Dio _initDio() {
     baseUrl: AppConfig.host,
     responseType: ResponseType.plain, // 数据类型
     receiveDataWhenStatusError: true,
+    // 添加通用的请求头，避免触发额外的预检请求
+    headers: {
+      'Content-Type': 'application/json',
+    },
   );
   Dio dioClient = Dio(baseOpts); // 实例化请求，可以传入options参数
   dioClient.interceptors.addAll([

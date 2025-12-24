@@ -23,4 +23,7 @@ class RouteName {
 
   /// 主题设置页
   static String themeSettings = '/themeSettings';
+
+  /// 用户信息页
+  static String userProfile = '/userProfile';
 }

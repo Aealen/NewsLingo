@@ -4,9 +4,13 @@ import 'components/basic_btn/basic_btn.dart';
 import 'components/custom_checkbox/custom_checkbox.dart';
 import 'components/custom_input/custom_input.dart';
 import '../../models/login.m.dart';
+import '../../models/auth.m.dart';
+import '../../services/auth_service.dart';
 import '../../utils/tool/user_util.dart';
 import '../../utils/tool/tips_util.dart';
 import '../../utils/index.dart';
+import '../../routes/route_name.dart';
+import '../app_main/app_main.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key, this.params});
@@ -23,8 +27,10 @@ class _LoginState extends State<Login> {
   Color desTextColor = const Color(0xFFB4B9C6);
   final _phoneController = TextEditingController();
   final _captchaController = TextEditingController();
+  final _passwordController = TextEditingController();
   Color btnDisableColor = const Color(0xffAFD1FC); // 禁用按钮颜色
   bool isSelected = false; // 协议勾选
+  bool _isPasswordLogin = true; // 是否密码登录模式
 
   @override
   void initState() {
@@ -36,6 +42,7 @@ class _LoginState extends State<Login> {
   void dispose() {
     _phoneController.dispose();
     _captchaController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -64,16 +71,65 @@ class _LoginState extends State<Login> {
     if (!inputIsPhone()) return;
     FocusScope.of(context).requestFocus(blankNode);
     if (!isSelected) return Tips.info('请确认已阅读用户协议和隐私协议');
-    String captText = _captchaController.text;
-    if (captText.isEmpty || captText.length < 6) return Tips.info('请输入正确的验证码');
 
-    // TODO: 登入请求逻辑
-    LoginMobileData userData = LoginMobileData(
-      mobile: _phoneController.text,
-    );
-    // 成功后，回退上一页
-    await UserUtil.saveUserInfo(userData);
-    if (context.mounted) Navigator.pop(context, true);
+    try {
+      RLoginResVO res;
+
+      if (_isPasswordLogin) {
+        // 密码登录
+        String pwdText = _passwordController.text;
+        if (pwdText.isEmpty) return Tips.info('请输入密码');
+
+        // 调用密码登录接口
+        res = await AuthService.doLogin(LoginDTO(
+          phone: _phoneController.text,
+          password: pwdText,
+          encrypted: false, // 前端未加密
+        ));
+      } else {
+        // 验证码登录
+        String captText = _captchaController.text;
+        if (captText.isEmpty || captText.length < 6) {
+          return Tips.info('请输入正确的验证码');
+        }
+
+        // 调用验证码登录接口
+        res = await AuthService.doLogin(LoginDTO(
+          phone: _phoneController.text,
+          captcha: captText,
+        ));
+      }
+
+      // 处理响应
+      if (res.isSuccess && res.data != null) {
+        // 保存 token
+        await UserUtil.saveLoginRes(res.data!);
+
+        // 保存用户信息
+        LoginMobileData userData = LoginMobileData(
+          mobile: _phoneController.text,
+          authorization: res.data!.token,
+        );
+        await UserUtil.saveUserInfo(userData);
+
+        // 成功后，清空导航栈并跳转到首页
+        if (context.mounted) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AppMain(),
+            ),
+            (route) => false,
+          );
+          // 跳转后显示提示
+          Tips.info('登录成功');
+        }
+      } else {
+        Tips.info(res.msg ?? '登录失败');
+      }
+    } catch (e) {
+      Tips.info('登录请求失败: $e');
+    }
   }
 
   @override
@@ -102,14 +158,51 @@ class _LoginState extends State<Login> {
             hintText: '点击输入手机号码',
             inputType: InputType.close,
           ),
-          CustomInput(
-            controller: _captchaController,
-            hintText: '点击输入短信验证码',
-            inputType: InputType.captcha,
-            onTapCaptcha: onTapCaptcha,
-          ),
+          // 登录方式切换按钮
+          _buildLoginTypeSwitch(),
+          // 根据登录模式显示不同输入框
+          if (_isPasswordLogin)
+            CustomInput(
+              controller: _passwordController,
+              hintText: '请输入密码',
+              inputType: InputType.password,
+              keyboardType: TextInputType.visiblePassword,
+            )
+          else
+            CustomInput(
+              controller: _captchaController,
+              hintText: '点击输入短信验证码',
+              inputType: InputType.captcha,
+              onTapCaptcha: onTapCaptcha,
+            ),
           bottomBtn(),
           slaText(),
+        ],
+      ),
+    );
+  }
+
+  // 登录方式切换按钮
+  Widget _buildLoginTypeSwitch() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 23.w),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _isPasswordLogin = !_isPasswordLogin;
+              });
+            },
+            child: Text(
+              _isPasswordLogin ? '验证码登录' : '密码登录',
+              style: TextStyle(
+                fontSize: 28.sp,
+                color: Colors.blue,
+              ),
+            ),
+          ),
         ],
       ),
     );

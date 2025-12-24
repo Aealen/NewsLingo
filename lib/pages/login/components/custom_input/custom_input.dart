@@ -15,6 +15,9 @@ enum InputType {
 
   /// 自定义
   custom,
+
+  /// 密码
+  password,
 }
 
 class CustomInput extends StatefulWidget {
@@ -75,6 +78,7 @@ class _CustomInputState extends State<CustomInput> {
   Timer? _timer; // 定时对象
   final FocusNode _focusNode = FocusNode(); // 光标
   bool isFocus = false; // 是否聚集
+  bool _obscureText = true; // 密码是否隐藏显示
 
   @override
   void initState() {
@@ -104,6 +108,13 @@ class _CustomInputState extends State<CustomInput> {
           LengthLimitingTextInputFormatter(6),
         ]);
         break;
+      case InputType.password:
+        // 密码不限制输入字符类型
+        formmatterList.add(LengthLimitingTextInputFormatter(20));
+        break;
+      case InputType.custom:
+        // 自定义类型不限制
+        break;
       default:
         formmatterList.addAll([
           FilteringTextInputFormatter.digitsOnly,
@@ -130,6 +141,7 @@ class _CustomInputState extends State<CustomInput> {
             autofocus: widget.autofocus!,
             keyboardType: widget.keyboardType, // 默认键盘类型
             inputFormatters: widget.inputFormatters ?? dyFormatters(),
+            obscureText: widget.inputType == InputType.password ? _obscureText : false,
             decoration: InputDecoration(
               hintText: widget.hintText ?? '',
               hintStyle: TextStyle(
@@ -190,6 +202,25 @@ class _CustomInputState extends State<CustomInput> {
             ),
           );
         }
+        break;
+      // 密码显示/隐藏图标
+      case InputType.password:
+        fixedChild = Positioned(
+          right: 0,
+          top: 15,
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                _obscureText = !_obscureText;
+              });
+            },
+            child: Icon(
+              _obscureText ? Icons.visibility_off : Icons.visibility,
+              size: 36.sp,
+              color: const Color(0xFFB4B9C6),
+            ),
+          ),
+        );
         break;
       default:
     }

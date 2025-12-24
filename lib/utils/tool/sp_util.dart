@@ -151,13 +151,15 @@ class SpUtil {
   /// 移除指定key缓存
   Future<bool> remove(String key) async {
     if (_prefs == null) await getInstance();
-    return _prefs?.remove(key) as bool;
+    bool? result = await _prefs?.remove(key);
+    return result ?? false;
   }
 
   /// 清空所有缓存
   Future<bool> clear() async {
     if (_prefs == null) await getInstance();
-    return _prefs?.clear() as bool;
+    bool? result = await _prefs?.clear();
+    return result ?? false;
   }
 
   /// 重新加载缓存数据

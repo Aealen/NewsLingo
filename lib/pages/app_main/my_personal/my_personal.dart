@@ -3,6 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jh_debug/jh_debug.dart';
 import '../../../../routes/route_name.dart';
 import '../../../../constants/themes/index_theme.dart';
+import '../../../../models/auth.m.dart';
+import '../../../../services/auth_service.dart';
+import '../../../../utils/tool/user_util.dart';
+import '../../../../utils/tool/tips_util.dart';
 
 import 'components/head_userbox.dart';
 
@@ -15,6 +19,61 @@ class _MyPersonalState extends State<MyPersonal>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
+
+  UserInfoVO? _userInfo;
+  bool _isLoading = true;
+  bool _isLoggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginAndLoadUserInfo();
+  }
+
+  /// 检查登录状态并加载用户信息
+  Future<void> _checkLoginAndLoadUserInfo() async {
+    setState(() => _isLoading = true);
+
+    // 检查是否已登录
+    bool isLoggedIn = await UserUtil.isLogin();
+    setState(() => _isLoggedIn = isLoggedIn);
+
+    if (isLoggedIn) {
+      await _loadUserInfo();
+    } else {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  /// 加载用户信息
+  Future<void> _loadUserInfo() async {
+    try {
+      RUserInfoVO userInfoRes = await AuthService.getUserInfo();
+
+      if (userInfoRes.isSuccess && userInfoRes.data != null) {
+        // 保存完整用户信息
+        await UserUtil.saveFullUserInfo(userInfoRes.data!);
+        setState(() {
+          _userInfo = userInfoRes.data;
+          _isLoading = false;
+        });
+      } else {
+        setState(() => _isLoading = false);
+      }
+    } catch (e) {
+      // 如果是 Web 环境的 CORS 错误，尝试从缓存读取
+      UserInfoVO? cachedUserInfo = await UserUtil.getFullUserInfo();
+      setState(() {
+        _userInfo = cachedUserInfo;
+        _isLoading = false;
+      });
+    }
+  }
+
+  /// 刷新用户信息
+  Future<void> _refreshUserInfo() async {
+    await _loadUserInfo();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +125,81 @@ class _MyPersonalState extends State<MyPersonal>
 
   // 构建用户信息卡片
   Widget _buildUserInfoCard() {
+    // 如果正在加载，显示加载状态
+    if (_isLoading) {
+      return _buildLoadingCard();
+    }
+
+    // 如果未登录，显示未登录状态
+    if (!_isLoggedIn || _userInfo == null) {
+      return _buildNotLoggedInCard();
+    }
+
+    // 已登录，显示用户信息
+    return _buildLoggedInCard();
+  }
+
+  /// 加载中的卡片
+  Widget _buildLoadingCard() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16.w),
+      padding: EdgeInsets.all(24.w),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 64.w,
+            height: 64.w,
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(32.r),
+            ),
+            child: Center(
+              child: SizedBox(
+                width: 32.w,
+                height: 32.w,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).primaryColor,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: 16.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '加载中...',
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).textTheme.titleLarge?.color,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 未登录的卡片
+  Widget _buildNotLoggedInCard() {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.all(24.w),
@@ -131,7 +265,10 @@ class _MyPersonalState extends State<MyPersonal>
           // 登录按钮
           GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context, RouteName.login);
+              Navigator.pushNamed(context, RouteName.login).then((_) {
+                // 登录返回后刷新用户信息
+                _checkLoginAndLoadUserInfo();
+              });
             },
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
@@ -150,6 +287,115 @@ class _MyPersonalState extends State<MyPersonal>
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  /// 已登录的卡片
+  Widget _buildLoggedInCard() {
+    final String displayName = _userInfo?.nickname?.isNotEmpty == true
+        ? _userInfo!.nickname!
+        : (_userInfo?.phone ?? '用户');
+    final String userPhone = _userInfo?.phone ?? '';
+    final String userAvatar = _userInfo?.avatar ?? '';
+
+    return GestureDetector(
+      onTap: () {
+        // 跳转到用户信息页面
+        Navigator.pushNamed(context, RouteName.userProfile).then((result) {
+          // 从用户信息页面返回后刷新
+          if (result == true) {
+            _checkLoginAndLoadUserInfo();
+          }
+        });
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 16.w),
+        padding: EdgeInsets.all(24.w),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            BoxShadow(
+              color: Theme.of(context).shadowColor.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // 头像
+            Container(
+              width: 64.w,
+              height: 64.w,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Theme.of(context).primaryColor,
+                    Theme.of(context).primaryColor.withOpacity(0.7),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(32.r),
+              ),
+              child: userAvatar.isNotEmpty
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(32.r),
+                      child: Image.network(
+                        userAvatar,
+                        width: 64.w,
+                        height: 64.w,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(
+                            Icons.person,
+                            size: 32.w,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          );
+                        },
+                      ),
+                    )
+                  : Icon(
+                      Icons.person,
+                      size: 32.w,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+            ),
+            SizedBox(width: 16.w),
+            // 用户信息
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    displayName,
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).textTheme.titleLarge?.color,
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    userPhone.isNotEmpty ? userPhone : '已登录',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // 箭头图标
+            Icon(
+              Icons.chevron_right,
+              size: 20.w,
+              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.5),
+            ),
+          ],
+        ),
       ),
     );
   }
